@@ -98,7 +98,7 @@ export default {
       } else if (this.gameCnt === 0 && +this.randomNum !== +this.inputNum) {
         this.isGameOver = true;
         this.isShow = false;
-        this.retMsg = '☠게임 오버😭';
+        this.retMsg = `☠게임 오버☠ 답은 바로 ${this.randomNum}이었다능😭`;
         btn.disabled = true;
       }
     },
@@ -111,6 +111,7 @@ export default {
       this.gameCnt = 10;
       this.isGameOver = false;
       this.isShow = true;
+      this.retMsg = '';
       btn.disabled = false;
       checkInputVal();
       console.log(this.randomNum);
