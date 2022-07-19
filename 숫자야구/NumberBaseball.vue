@@ -1,15 +1,23 @@
 <template>
-  <form @submit="onSubmitForm">
-    <input
-      type="text"
-      placeholder="숫자를 4자리 입력하세요"
-      v-model="inputNum"
-      ref="input"
-      class="input"
-    />
-    <button class="btn">결과 보기</button>
-    <div>{{ inputNum }}</div>
-  </form>
+  <div>
+    <form @submit="onSubmitForm">
+      <input
+        type="text"
+        placeholder="숫자를 4자리 입력하세요"
+        v-model="inputNum"
+        ref="input"
+        class="input"
+      />
+      <button class="btn">결과 보기</button>
+    </form>
+    <ul>
+      <li v-for="(el, idx) in tries" :key="idx">
+        <div v-if="!matched">
+          입력한 숫자: {{ el.input }} {{ el.strike }}스트라이크 {{ el.ball }}볼
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -19,12 +27,8 @@ export default {
     return {
       randomNum: [],
       inputNum: '',
-      retObj: {
-        input: '',
-        strike: 0,
-        ball: 0,
-      },
       tries: [],
+      matched: false,
     };
   },
   methods: {
@@ -35,25 +39,22 @@ export default {
     },
     onSubmitForm(e) {
       e.preventDefault();
-
-      this.retObj.input = this.inputNum;
+      const retObj = {
+        input: '',
+        strike: 0,
+        ball: 0,
+      };
+      retObj.input = this.inputNum;
 
       for (const i in this.randomNum) {
         if (+this.inputNum[i] === this.randomNum[i]) {
-          this.retObj.strike++;
-        } else if (
-          +this.inputNum[i] !== this.randomNum[i] &&
-          this.randomNum.includes(+this.inputNum[i])
-        ) {
-          this.retObj.ball++;
+          retObj.strike++;
+        } else if (this.randomNum.includes(+this.inputNum[i])) {
+          retObj.ball++;
         }
       }
-      console.log(this.retObj);
-      this.tries.push(this.retObj);
 
-      this.retObj.strike = 0;
-      this.retObj.ball = 0;
-      console.log(this.tries);
+      this.tries.push(retObj);
     },
     genRandomNum() {
       while (true) {
