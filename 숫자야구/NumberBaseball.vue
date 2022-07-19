@@ -10,13 +10,18 @@
       />
       <button class="btn">결과 보기</button>
     </form>
-    <ul>
+    <div v-show="isShow">남은 목숨: {{ gameCnt }}</div>
+    <ul v-show="isShow">
       <li v-for="(el, idx) in tries" :key="idx">
-        <div v-if="!matched">
-          입력한 숫자: {{ el.input }} {{ el.strike }}스트라이크 {{ el.ball }}볼
-        </div>
+        입력한 숫자: {{ el.input }} {{ el.strike }}스트라이크 {{ el.ball }}볼
       </li>
     </ul>
+    <div v-if="isMatched">🎉홈런!</div>
+    <div v-else-if="isGameOver">☠게임 오버</div>
+    <div v-if="isMatched || isGameOver">
+      다시 시작하시겠습니까?
+      <button @click="resetGame">한 판 더!</button>
+    </div>
   </div>
 </template>
 
@@ -28,7 +33,10 @@ export default {
       randomNum: [],
       inputNum: '',
       tries: [],
-      matched: false,
+      isMatched: false,
+      gameCnt: 10,
+      isGameOver: false,
+      isShow: true,
     };
   },
   methods: {
@@ -39,13 +47,14 @@ export default {
     },
     onSubmitForm(e) {
       e.preventDefault();
+
       const retObj = {
         input: '',
         strike: 0,
         ball: 0,
       };
-      retObj.input = this.inputNum;
 
+      retObj.input = this.inputNum;
       for (const i in this.randomNum) {
         if (+this.inputNum[i] === this.randomNum[i]) {
           retObj.strike++;
@@ -55,6 +64,9 @@ export default {
       }
 
       this.tries.push(retObj);
+
+      this.numMatchedChecker();
+      this.gameOverChecker();
     },
     genRandomNum() {
       while (true) {
@@ -75,6 +87,29 @@ export default {
           btn.disabled = false;
         }
       });
+    },
+    numMatchedChecker() {
+      if (+this.inputNum === +this.randomNum.join('')) {
+        this.isMatched = true;
+        this.isShow = false;
+      }
+    },
+    gameOverChecker() {
+      this.gameCnt--;
+      if (this.gameCnt === 0) {
+        this.isGameOver = true;
+        this.isShow = false;
+      }
+    },
+    resetGame() {
+      this.randomNum = [];
+      this.inputNum = '';
+      this.tries = [];
+      this.isMatched = false;
+      this.gameCnt = 10;
+      this.isGameOver = false;
+      this.isShow = true;
+      this.init();
     },
   },
   mounted() {
