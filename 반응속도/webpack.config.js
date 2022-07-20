@@ -18,7 +18,15 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader'],
+        use: [
+          'vue-style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: false,
+            },
+          },
+        ],
       },
     ],
   },
@@ -26,6 +34,11 @@ module.exports = {
   output: {
     filename: 'app.js',
     path: path.join(__dirname, 'dist'),
-    publicPath: '/dist',
+    publicPath: '/dist/',
+  },
+  devServer: {
+    devMiddleware: { publicPath: '/dist' },
+    static: { directory: path.resolve(__dirname) },
+    hot: true,
   },
 };
